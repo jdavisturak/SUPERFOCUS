@@ -1,10 +1,11 @@
-#SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data || version 0.22
+#SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data || version 0.22.X.1
 #-------------------------------------------------------------------------------------------------------------
 #(c)            Silva, G. G. Z., Green K., B. E. Dutilh, and R. A. Edwards: 
 #			   SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data. (under review)
 #website: 	   https://edwards.sdsu.edu/SUPERFOCUS
 
 import os,sys,numpy as np
+import subprocess
 
 options= "SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data\n"\
       "-------------------------------------------------------------------------------------------------------------\n"\
@@ -187,13 +188,22 @@ def align(mydb):
 
     elif aligner=="diamond":
         blast="blastx"
-       
         if proteins==1:#we have proteins as input
             blast="blastp"
-        if fast_mode=="T":#fast mode
-            os.system("diamond "+blast+" -d "+myproject["dir"]+"db/"+databaseMode+"/diamond/"+mydb+" -q "+query+" -o "+project_output+"/"+project_name+"__alignments.m8 -k 250  -p "+T+" -e "+evalue)
-        else:#sensitive mode
-            os.system("diamond "+blast+" -d "+myproject["dir"]+"db/"+databaseMode+"/diamond/"+mydb+" -q "+query+" -o "+project_output+"/"+project_name+"__alignments.m8 -k 250  -p "+T+" -e "+evalue+" --sensitive")
+        dia = str("diamond "+blast+" -d "+myproject["dir"]+"db/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
+        if fast_mode==0:#fast mode
+            dia += " --sensitive"
+        #print(dia)
+        os.system(dia)
+        print ("running diamond view")
+        #dia2 = str("diamond view -a "+project_output+"/"+project_name+"__alignments.daa -o "+project_output+"/"+project_name+"__alignments.m8")
+        dia2 = ["diamond",  "view", "-a", project_output+"/"+project_name+"__alignments.daa", "-o", project_output+"/"+project_name+"__alignments.m8"]
+        a=subprocess.Popen(dia2)
+        a.wait()
+        #os.system(dia2)
+        print(dia2)
+        # else:#sensitive mode
+        #     os.system("diamond "+blast+" -d "+myproject["dir"]+"db/"+databaseMode+"/diamond/"+mydb+" -q "+query+" -o "+project_output+"/"+project_name+"__alignments.m8 -k 250  -p "+T+" -e "+evalue+" --sensitive")
             
     elif aligner=="blast":
         if proteins==0:#we have nucleotides as input
@@ -202,7 +212,7 @@ def align(mydb):
             os.system("blastp -db "+myproject["dir"]+"db/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
 
     if databaseMode=="focus_reduction":
-        [os.system("rm "+myproject["dir"]+"dbfocus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
+        [os.system("rm "+myproject["dir"]+"db/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
         
 
 #This function parses the alignments of BLAST, RAPSEARCH2 or DIAMOND
@@ -310,7 +320,7 @@ def write_functions(function_assignments):
             o.write(assignment+"\t"+str(function_assignments[assignment])+"\t"+str((function_assignments[assignment]/S)*100)+"\n")
         o.close()
 
-def main():
+def main2():
     p=0;a=1
     print "SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data"
     if myproject["-q"]=="":#check if the query is valid
@@ -358,7 +368,7 @@ def main():
             write_results(subsystems_assignments)
             write_functions(functions_assignments)
             print "Done :) Please check the '"+project_output+project_name+"' folder"
-            os.system("rm "+project_output+"/"+my_alignments+".m8")
+            #os.system("rm "+project_output+"/"+my_alignments+".m8")
         else:
             print "There was a problem in the alignment process"
 
@@ -369,6 +379,6 @@ try:
     elif (2.6<=version<3.0)==False:
         print "SUPER-FOCUS requires Python >= 2.6.X or < Python 3.Z"
     else:
-        main()
+        main2()
 except:
     print options

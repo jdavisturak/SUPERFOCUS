@@ -1,5 +1,8 @@
 -- Version history --
 
+->SUPERFOCUS 0.22.X.1:
+-Onramp Bioinformatics edit to superfocus.py diamond calling
+
 -> SUPERFOCUS 0.22:
 - Presence /absence table annotated with RAST was added in the pipeline. NCBI is still the default table used in the 
   program reduction
