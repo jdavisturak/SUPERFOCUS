@@ -1,0 +1,18 @@
+-- Version history --
+
+-> SUPERFOCUS 0.22:
+- Presence /absence table annotated with RAST was added in the pipeline. NCBI is still the default table used in the 
+  program reduction
+- Minor bugs
+
+-> SUPERFOCUS 0.21:
+- Check python version and works with python 2.6(just in case the user does not have the right version installed)
+
+-> SUPERFOCUS 0.2:
+- The user can choose which aligner he/she want to format the database to. It saves storage in case the user
+does not want to use all the aligner options. Thanks Beltran Rodriguez Mueller for the comments.
+- The program deletes the alignments, to save some storage, after parsing the file.
+- Function level profile
+
+-> SUPERFOCUS 0.1:
+- First release
