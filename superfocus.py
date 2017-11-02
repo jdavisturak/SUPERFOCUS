@@ -69,6 +69,7 @@ else:
     os.system("mkdir -p "+project_name)
     project_output=project_name# a folder with the project name is created in the SF directory
     dbLocation = myproject["dir"] + "/db"
+systemDbLocation = myproject["dir"] + "/db"
 
 print "User's output folder is {}. Database location is {}".format(project_output, dbLocation)
 query=myproject["-q"]
@@ -137,9 +138,9 @@ def formatDb(organisms):
         return np.sum(matrix, axis=0)
 
     if myproject["-r"]=="rast":
-        f=open(dbLocation+"/organisms2subsystem__RAST.txt")
+        f=open(systemDbLocation+"/organisms2subsystem__RAST.txt")
     else:
-        f=open(dbLocation+"/organisms2subsystem.txt")
+        f=open(systemDbLocation+"/organisms2subsystem.txt")
     f.readline()
     matrix=[]
 
@@ -155,7 +156,7 @@ def formatDb(organisms):
     #return all the subsystems IDs present int the predicted organisms
     subsystems=[str(i+1) for i in range(0,1290) if matrix[i]!=0]
 
-    path=" "+dbLocation+"/clusters/"+mydb+"_clusters/"
+    path=" "+systemDbLocation+"/clusters/"+mydb+"_clusters/"
     print "\n\nFormatting DB: "+str(len(subsystems))+" are going to be used in the DB"
     dbname="DB__"+query.split("/")[-1]
 
@@ -288,7 +289,7 @@ def write_results(subsystems_assignments):
     DBpk={}
 
     #loads the subsystems PK (primary keys) 
-    f=open(dbLocation+"/database_PKs.txt");f.readline()
+    f=open(systemDbLocation+"/database_PKs.txt");f.readline()
     for line in f:
         line=line.replace("\n","").replace("\r","").split("\t")
         DBpk[line[0]]=line[1:]        
