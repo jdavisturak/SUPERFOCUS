@@ -199,7 +199,7 @@ def align(mydb):
         dia = str("diamond "+blast+" -d "+systemDbLocation+"/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
         if fast_mode==0:#fast mode
             dia += " --sensitive"
-        #print(dia)
+        print(dia)
         os.system(dia)
         print ("running diamond view")
         #dia2 = str("diamond view -a "+project_output+"/"+project_name+"__alignments.daa -o "+project_output+"/"+project_name+"__alignments.m8")
