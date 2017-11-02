@@ -183,20 +183,22 @@ def formatDb(organisms):
 def align(mydb):
     aligner=myproject["-a"]
     databaseMode="static"
+    currentDbLocation = systemDbLocation+"/static"
     if "DB__" in mydb:#it run FOCUS
         databaseMode="focus_reduction"
-        os.system("mkdir -p "+dbLocation+"/focus_reduction/"+aligner+('2' if aligner == 'rapsearch' else ''))
+        currentDbLocation=dbLocation+"/focus_reduction/"
+        os.system("mkdir -p "+currentDbLocation+aligner+('2' if aligner == 'rapsearch' else ''))
     else:
         mydb=mydb+".db"
         
     if aligner=="rapsearch":
-        os.system("rapsearch -a "+fast_mode+" -q "+query+" -d "+systemDbLocation+"/"+databaseMode+"/rapsearch2/"+mydb+" -o "+project_output+"/"+project_name+"__alignments -v 250 -z "+T+" -e "+evalue+" -b 0 -s f")
+        os.system("rapsearch -a "+fast_mode+" -q "+query+" -d "+currentDbLocation+"/rapsearch2/"+mydb+" -o "+project_output+"/"+project_name+"__alignments -v 250 -z "+T+" -e "+evalue+" -b 0 -s f")
 
     elif aligner=="diamond":
         blast="blastx"
         if proteins==1:#we have proteins as input
             blast="blastp"
-        dia = str("diamond "+blast+" -d "+dbLocation+"/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
+        dia = str("diamond "+blast+" -d "+currentDbLocation+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
         if fast_mode==0:#fast mode
             dia += " --sensitive"
         print(dia)
@@ -213,9 +215,9 @@ def align(mydb):
             
     elif aligner=="blast":
         if proteins==0:#we have nucleotides as input
-            os.system("blastx -db "+systemDbLocation+"/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
+            os.system("blastx -db "+currentDbLocation+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
         else:#if the user wants to input proteins, but the FOCUS prediction would be done
-            os.system("blastp -db "+systemDbLocation+"/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
+            os.system("blastp -db "+currentDbLocation+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
 
     # if databaseMode=="focus_reduction":
     #     [os.system("rm "+dbLocation+"/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
