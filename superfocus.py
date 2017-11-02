@@ -69,7 +69,8 @@ else:
     os.system("mkdir -p "+project_name)
     project_output=project_name# a folder with the project name is created in the SF directory
     dbLocation = myproject["dir"] + "/db"
-    
+
+print "User's output folder is {}. Database location is {}".format(project_output, dbLocation)
 query=myproject["-q"]
 mi=float(myproject["-mi"])
 ml=int(myproject["-ml"])
