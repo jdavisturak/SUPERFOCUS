@@ -63,9 +63,12 @@ project_output=myproject["-dir"]+"/"
 if project_output != "":
     #creates the folder to output the files
     os.system("mkdir -p "+project_output)
+    dbLocation =  project_output + "/db"
+    os.system("mkdir -p " + dbLocation)
 else:
     os.system("mkdir -p "+project_name)
     project_output=project_name# a folder with the project name is created in the SF directory
+    dbLocation = myproject["dir"] + "/db"
     
 query=myproject["-q"]
 mi=float(myproject["-mi"])
@@ -133,9 +136,9 @@ def formatDb(organisms):
         return np.sum(matrix, axis=0)
 
     if myproject["-r"]=="rast":
-        f=open(myproject["dir"]+"db/organisms2subsystem__RAST.txt")
+        f=open(dbLocation+"/organisms2subsystem__RAST.txt")
     else:
-        f=open(myproject["dir"]+"db/organisms2subsystem.txt")
+        f=open(dbLocation+"/organisms2subsystem.txt")
     f.readline()
     matrix=[]
 
@@ -151,23 +154,23 @@ def formatDb(organisms):
     #return all the subsystems IDs present int the predicted organisms
     subsystems=[str(i+1) for i in range(0,1290) if matrix[i]!=0]
 
-    path=" "+myproject["dir"]+"db/clusters/"+mydb+"_clusters/"
+    path=" "+dbLocation+"/clusters/"+mydb+"_clusters/"
     print "\n\nFormatting DB: "+str(len(subsystems))+" are going to be used in the DB"
     dbname="DB__"+query.split("/")[-1]
 
-    os.system("cat "+path+path.join([value+"_cluster.faa" for value in subsystems])+" > "+myproject["dir"]+"db/focus_reduction/"+dbname)
+    os.system("cat "+path+path.join([value+"_cluster.faa" for value in subsystems])+" > "+dbLocation+"/focus_reduction/"+dbname)
     
     
     #Here the database is formatted based on your option of aligner
     if aligner=="rapsearch":
-        os.system("prerapsearch -d "+myproject["dir"]+"db/focus_reduction/"+dbname+" -n "+myproject["dir"]+"db/focus_reduction/rapsearch2/"+dbname+".db")
+        os.system("prerapsearch -d "+dbLocation+"/focus_reduction/"+dbname+" -n "+dbLocation+"/focus_reduction/rapsearch2/"+dbname+".db")
     elif aligner=="diamond":
-        os.system("diamond makedb --in  "+myproject["dir"]+"db/focus_reduction/"+dbname+" --db "+myproject["dir"]+"db/focus_reduction/diamond/"+dbname+".db")
+        os.system("diamond makedb --in  "+dbLocation+"/focus_reduction/"+dbname+" --db "+dbLocation+"/focus_reduction/diamond/"+dbname+".db")
     else:
-        os.system("makeblastdb -in "+myproject["dir"]+"db/focus_reduction/"+dbname+" -dbtype prot -out "+myproject["dir"]+"db/focus_reduction/blast/"+dbname+".db -title "+dbname)
+        os.system("makeblastdb -in "+dbLocation+"/focus_reduction/"+dbname+" -dbtype prot -out "+dbLocation+"/focus_reduction/blast/"+dbname+".db -title "+dbname)
 
     #delete fasta with sequences
-    os.system("rm "+myproject["dir"]+"db/focus_reduction/"+dbname)
+    os.system("rm "+dbLocation+"/focus_reduction/"+dbname)
     
     return dbname+".db"
 
@@ -184,13 +187,13 @@ def align(mydb):
         mydb=mydb+".db"
         
     if aligner=="rapsearch":
-        os.system("rapsearch -a "+fast_mode+" -q "+query+" -d "+myproject["dir"]+"db/"+databaseMode+"/rapsearch2/"+mydb+" -o "+project_output+"/"+project_name+"__alignments -v 250 -z "+T+" -e "+evalue+" -b 0 -s f")
+        os.system("rapsearch -a "+fast_mode+" -q "+query+" -d "+dbLocation+"/"+databaseMode+"/rapsearch2/"+mydb+" -o "+project_output+"/"+project_name+"__alignments -v 250 -z "+T+" -e "+evalue+" -b 0 -s f")
 
     elif aligner=="diamond":
         blast="blastx"
         if proteins==1:#we have proteins as input
             blast="blastp"
-        dia = str("diamond "+blast+" -d "+myproject["dir"]+"db/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
+        dia = str("diamond "+blast+" -d "+dbLocation+"/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
         if fast_mode==0:#fast mode
             dia += " --sensitive"
         #print(dia)
@@ -203,16 +206,16 @@ def align(mydb):
         #os.system(dia2)
         print(dia2)
         # else:#sensitive mode
-        #     os.system("diamond "+blast+" -d "+myproject["dir"]+"db/"+databaseMode+"/diamond/"+mydb+" -q "+query+" -o "+project_output+"/"+project_name+"__alignments.m8 -k 250  -p "+T+" -e "+evalue+" --sensitive")
+        #     os.system("diamond "+blast+" -d "+dbLocation+"/"+databaseMode+"/diamond/"+mydb+" -q "+query+" -o "+project_output+"/"+project_name+"__alignments.m8 -k 250  -p "+T+" -e "+evalue+" --sensitive")
             
     elif aligner=="blast":
         if proteins==0:#we have nucleotides as input
-            os.system("blastx -db "+myproject["dir"]+"db/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
+            os.system("blastx -db "+dbLocation+"/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
         else:#if the user wants to input proteins, but the FOCUS prediction would be done
-            os.system("blastp -db "+myproject["dir"]+"db/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
+            os.system("blastp -db "+dbLocation+"/"+databaseMode+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
 
     if databaseMode=="focus_reduction":
-        [os.system("rm "+myproject["dir"]+"db/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
+        [os.system("rm "+dbLocation+"/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
         
 
 #This function parses the alignments of BLAST, RAPSEARCH2 or DIAMOND
@@ -284,7 +287,7 @@ def write_results(subsystems_assignments):
     DBpk={}
 
     #loads the subsystems PK (primary keys) 
-    f=open(myproject["dir"]+"db/database_PKs.txt");f.readline()
+    f=open(dbLocation+"/database_PKs.txt");f.readline()
     for line in f:
         line=line.replace("\n","").replace("\r","").split("\t")
         DBpk[line[0]]=line[1:]        
