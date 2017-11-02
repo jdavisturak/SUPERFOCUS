@@ -185,6 +185,7 @@ def align(mydb):
     databaseMode="static"
     if "DB__" in mydb:#it run FOCUS
         databaseMode="focus_reduction"
+        os.system("mkdir -p "+dbLocation+"/focus_reduction/"+aligner+('2' if aligner == 'rapsearch' else ''))
     else:
         mydb=mydb+".db"
         
