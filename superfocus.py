@@ -385,4 +385,6 @@ try:
     else:
         main2()
 except:
+    import traceback
+    print traceback.format_exc()
     print options
