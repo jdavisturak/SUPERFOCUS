@@ -196,7 +196,7 @@ def align(mydb):
         blast="blastx"
         if proteins==1:#we have proteins as input
             blast="blastp"
-        dia = str("diamond "+blast+" -d "+systemDbLocation+"/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
+        dia = str("diamond "+blast+" -d "+dbLocation+"/"+databaseMode+"/diamond/"+mydb+" -q "+query+ " -a "+project_output+"/"+project_name+"__alignments.daa"+" -k 250 -p "+T+" -e "+evalue)
         if fast_mode==0:#fast mode
             dia += " --sensitive"
         print(dia)
