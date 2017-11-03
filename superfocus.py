@@ -219,8 +219,8 @@ def align(mydb):
         else:#if the user wants to input proteins, but the FOCUS prediction would be done
             os.system("blastp -db "+currentDbLocation+"/blast/"+mydb+" -query "+query+" -out "+project_output+"/"+project_name+"__alignments.m8 -outfmt 6 -evalue "+evalue+" -max_target_seqs 250 -num_threads "+T)
 
-    # if databaseMode=="focus_reduction":
-    #     [os.system("rm "+dbLocation+"/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
+    if databaseMode=="focus_reduction":
+        [os.system("rm "+dbLocation+"/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
         
 
 #This function parses the alignments of BLAST, RAPSEARCH2 or DIAMOND
