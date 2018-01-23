@@ -160,7 +160,7 @@ def formatDb(organisms):
     path=" "+systemDbLocation+"/clusters/"+mydb+"_clusters/"
     print "\n\nFormatting DB: "+str(len(subsystems))+" are going to be used in the DB"
     dbname="DB__"+query.split("/")[-1]
-    os.system("mkdir -p " + dbLocation + "/focus_reduction/" )
+    os.system("mkdir -p " + dbLocation + aligner + ('2' if aligner == 'rapsearch' else ''))
     os.system("cat "+path+path.join([value+"_cluster.faa" for value in subsystems])+" > "+dbLocation+"/focus_reduction/"+dbname)
     
     
@@ -188,7 +188,6 @@ def align(mydb):
     if "DB__" in mydb:#it run FOCUS
         databaseMode="focus_reduction"
         currentDbLocation=dbLocation+"/focus_reduction/"
-        os.system("mkdir -p "+currentDbLocation+aligner+('2' if aligner == 'rapsearch' else ''))
     else:
         mydb=mydb+".db"
         
@@ -222,7 +221,7 @@ def align(mydb):
 
     if databaseMode=="focus_reduction":
         [os.system("rm "+dbLocation+"/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
-        [os.system("rmdir " + dbLocation + "/focus_reduction/" + aligner +' 2> /dev/null') for aligner in  ["blast", "diamond", "rapsearch2", ""]] # also remove extra dirs
+        # [os.system("rmdir " + dbLocation + "/focus_reduction/" + aligner +' 2> /dev/null') for aligner in  ["blast", "diamond", "rapsearch2", ""]] # also remove extra dirs
         
 
 #This function parses the alignments of BLAST, RAPSEARCH2 or DIAMOND
