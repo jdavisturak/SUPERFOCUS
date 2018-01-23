@@ -160,7 +160,7 @@ def formatDb(organisms):
     path=" "+systemDbLocation+"/clusters/"+mydb+"_clusters/"
     print "\n\nFormatting DB: "+str(len(subsystems))+" are going to be used in the DB"
     dbname="DB__"+query.split("/")[-1]
-    os.system("mkdir -p " + dbLocation + aligner + ('2' if aligner == 'rapsearch' else ''))
+    os.system("mkdir -p " + dbLocation +"/focus_reduction/"+ aligner + ('2' if aligner == 'rapsearch' else ''))
     os.system("cat "+path+path.join([value+"_cluster.faa" for value in subsystems])+" > "+dbLocation+"/focus_reduction/"+dbname)
     
     
