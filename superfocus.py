@@ -6,6 +6,7 @@
 
 import os,sys,numpy as np
 import subprocess
+import traceback
 
 options= "SUPER-FOCUS: A tool for agile functional analysis of shotgun metagenomic data\n"\
       "-------------------------------------------------------------------------------------------------------------\n"\
@@ -389,6 +390,5 @@ try:
     else:
         main2()
 except:
-    import traceback
     print traceback.format_exc()
     print options
