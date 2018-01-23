@@ -64,13 +64,13 @@ project_output=myproject["-dir"]+"/"
 if project_output != "":
     #creates the folder to output the files
     os.system("mkdir -p "+project_output)
-    dbLocation =  project_output + "/db"
+    dbLocation =  project_output + "/"
     os.system("mkdir -p " + dbLocation)
 else:
     os.system("mkdir -p "+project_name)
     project_output=project_name# a folder with the project name is created in the SF directory
-    dbLocation = myproject["dir"] + "/db"
-systemDbLocation = myproject["dir"] + "/db"
+    dbLocation = myproject["dir"] + "/"
+systemDbLocation = "/opt/SUPERFOCUS/db"
 
 print "User's output folder is {}. Database location is {}".format(project_output, dbLocation)
 query=myproject["-q"]
@@ -160,7 +160,7 @@ def formatDb(organisms):
     path=" "+systemDbLocation+"/clusters/"+mydb+"_clusters/"
     print "\n\nFormatting DB: "+str(len(subsystems))+" are going to be used in the DB"
     dbname="DB__"+query.split("/")[-1]
-
+    os.system("mkdir -p " + dbLocation + "/focus_reduction/" )
     os.system("cat "+path+path.join([value+"_cluster.faa" for value in subsystems])+" > "+dbLocation+"/focus_reduction/"+dbname)
     
     
@@ -184,7 +184,7 @@ def formatDb(organisms):
 def align(mydb):
     aligner=myproject["-a"]
     databaseMode="static"
-    currentDbLocation = systemDbLocation+"/static"
+    currentDbLocation = systemDbLocation+"/static/"
     if "DB__" in mydb:#it run FOCUS
         databaseMode="focus_reduction"
         currentDbLocation=dbLocation+"/focus_reduction/"
@@ -222,6 +222,7 @@ def align(mydb):
 
     if databaseMode=="focus_reduction":
         [os.system("rm "+dbLocation+"/focus_reduction/"+aligner+"/"+mydb+'* 2> /dev/null') for aligner in ["blast","diamond","rapsearch2"]]
+        [os.system("rmdir " + dbLocation + "/focus_reduction/" + aligner +' 2> /dev/null') for aligner in  ["blast", "diamond", "rapsearch2", ""]] # also remove extra dirs
         
 
 #This function parses the alignments of BLAST, RAPSEARCH2 or DIAMOND
