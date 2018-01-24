@@ -168,7 +168,9 @@ def formatDb(organisms):
     if aligner=="rapsearch":
         os.system("prerapsearch -d "+dbLocation+"/focus_reduction/"+dbname+" -n "+dbLocation+"/focus_reduction/rapsearch2/"+dbname+".db")
     elif aligner=="diamond":
-        os.system("diamond makedb --in  "+dbLocation+"/focus_reduction/"+dbname+" --db "+dbLocation+"/focus_reduction/diamond/"+dbname+".db")
+        diamondCommand = "diamond makedb --in  "+dbLocation+"/focus_reduction/"+dbname+" --db "+dbLocation+"/focus_reduction/diamond/"+dbname+".db"
+        print diamondCommand
+        os.system(diamondCommand)
     else:
         os.system("makeblastdb -in "+dbLocation+"/focus_reduction/"+dbname+" -dbtype prot -out "+dbLocation+"/focus_reduction/blast/"+dbname+".db -title "+dbname)
 
